@@ -58,7 +58,7 @@ There are a few invariants that must be maintained:
 ASTACK
 ======
 
-Implments a 'pure' stack, implemented as a singly-linked list.
+Implements a 'pure' stack, implemented as a singly-linked list.
 The 'purity' means that the underlying singly-linked list data
 structure contains no data other than stack nodes. Using the stack
 means include 'astack.h' as a header file; the source code can
@@ -79,3 +79,23 @@ the iterator references, it can be used as an integrated free-list.
 For instance, by multiplying the iterator by '2', it can be
 integrated into an ALIST pool as a free-stack for the location
 of free nodes.
+
+VNUM
+====
+
+Implements a variable-width encoded unsigned integer. The maximum
+bit width of the integer is 56 bits. (The real target for this
+implementation is for creating unique 'names'; 56 bits should be
+enough for an incrementing name counter.)
+
+The function `layout_vnum` takes a (56 bit) integer and expands the
+integer to 1--8 bytes, output. The return is the expanded integer;
+the second argument is the number of bytes to save.
+
+The function `extract_vnum` is the inverse operation.
+
+The user is responsible for sign-extension.
+
+Note that no compiler I'm aware of will properly map the movmskb
+instruction from the idiomatic C code. Without movmskb, the extraction
+code is almost 2x slower.
