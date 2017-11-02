@@ -1,14 +1,22 @@
-all: btrie alist astack
+MAKEFLAGS			+=	--no-builtin-rules
+.PHONY				= all
 
-btrie: btrie.h btrie.c
-	clang -O3 -I. btrie.c -o bt -Wall -Werror
+all: bt al as vn
+
+CFLAGS	:= -O3
+
+bt: btrie.h btrie.c
+	clang $(CFLAGS) -I. btrie.c -o bt -Wall -Werror
 	time ./bt abcdefghijklmnoqrstuvwxyz
 
-alist: alist.h alist.c
-	clang -O3 -I. alist.c -o al -Wall -Werror
+al: alist.h alist.c
+	clang $(CFLAGS) -I. alist.c -o al -Wall -Werror
 
-astack: astack.h astack.c
-	clang -O3 -I. astack.c -o as -Wall -Werror
+as: astack.h astack.c
+	clang $(CFLAGS) -I. astack.c -o as -Wall -Werror
+
+vn: vnum.h vnum.c
+	clang $(CFLAGS) -I. vnum.c -o vn -Wall -Werror
 
 clean:
-	rm -rf *.dSYM bt
+	rm -rf *.dSYM bt al as vn
