@@ -88,6 +88,11 @@ bit width of the integer is 56 bits. (The real target for this
 implementation is for creating unique 'names'; 56 bits should be
 enough for an incrementing name counter.)
 
+The API is:
+
+    int layout_vnum(unsigned long long N, unsigned long long* poN);
+    unsigned long long extract_vnum(unsigned long long, int* poN);
+
 The function `layout_vnum` takes a (56 bit) integer and expands the
 integer to 1--8 bytes, output. The return is the expanded integer;
 the second argument is the number of bytes to save.
@@ -99,3 +104,8 @@ The user is responsible for sign-extension.
 Note that no compiler I'm aware of will properly map the movmskb
 instruction from the idiomatic C code. Without movmskb, the extraction
 code is almost 2x slower.
+
+The VNUM code is amenable to vectorization, as it is branch free. On
+certain compute-oriented x86 devices (Phis) there are instructions
+that allow the efficient writing of 'strings' based on a mask. This
+allows full insertion & extraction from a stream.
