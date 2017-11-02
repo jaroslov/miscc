@@ -45,6 +45,11 @@ unsigned long long extract_vnum(unsigned long long N, int *poN);
 
 #ifdef  VNUM_C
 
+#ifdef  X86_INTRINSICS
+#include <xmmintrin.h>
+#include <string.h>
+#endif//X86_INTRINSICS
+
 int layout_vnum(unsigned long long N, unsigned long long* poN)
 {
     N   = ((N & 0x00FFFFFFF0000000ULL) << 4)
@@ -68,18 +73,29 @@ int layout_vnum(unsigned long long N, unsigned long long* poN)
     return 8 - clz;
 }
 
+inline unsigned move_mask_b(unsigned long long N)
+{
+#ifdef  X86_INTRINSICS
+    __m64 M;
+    memcpy(&M, &N, sizeof(M));
+    return _mm_movemask_pi8(M);
+#else// X86_INTRINSICS
+    return    ((N >> (56 + 0)) & 0x80)
+            | ((N >> (48 + 1)) & 0x40)
+            | ((N >> (40 + 2)) & 0x20)
+            | ((N >> (32 + 3)) & 0x10)
+            | ((N >> (24 + 4)) & 0x08)
+            | ((N >> (16 + 5)) & 0x04)
+            | ((N >> ( 8 + 6)) & 0x02)
+            | ((N >> ( 0 + 7)) & 0x01)
+            ;
+#endif//X86_INTRINSICS
+}
+
 unsigned long long extract_vnum(unsigned long long N, int *poN)
 {
     unsigned long long error    = (0x80 & N) >> 7;
-    unsigned codes  = ((N >> (56 + 0)) & 0x80)
-                    | ((N >> (48 + 1)) & 0x40)
-                    | ((N >> (40 + 2)) & 0x20)
-                    | ((N >> (32 + 3)) & 0x10)
-                    | ((N >> (24 + 4)) & 0x08)
-                    | ((N >> (16 + 5)) & 0x04)
-                    | ((N >> ( 8 + 6)) & 0x02)
-                    | ((N >> ( 0 + 7)) & 0x01)
-                    ;
+    unsigned codes  = move_mask_b(N);
     codes           >>= 1;
     codes           = ~codes;
     int ctz         = __builtin_ctz(codes);

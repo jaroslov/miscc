@@ -32,6 +32,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef DEFINE_C
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -65,3 +66,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+#endif//DEFINE_C
