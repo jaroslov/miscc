@@ -109,3 +109,23 @@ The VNUM code is amenable to vectorization, as it is branch free. On
 certain compute-oriented x86 devices (Phis) there are instructions
 that allow the efficient writing of 'strings' based on a mask. This
 allows full insertion & extraction from a stream.
+
+WQUPC
+====
+
+Implements the Princeton weighted-quick-union-path-compression
+variation of the union-find algorithm.
+
+The API is:
+
+    int wqupc_init(struct wqupc* w, int n, int* id, int* sz);
+    int wqupc_root(struct wqupc* w, int i);
+    int wqupc_connected(struct wqupc* w, int i, int j);
+    int wqupc_union(struct wqupc* w, int i, int j);
+
+The function `init` is used to initialize the `wqupc` set. The function
+`root` returns the canonical identifier representing the union that
+the given element belongs to. The function `connected` asks if two
+elements belong to the same set. The function `union` performs the
+union of two sets. The run-times are given in the Princeton lecture,
+although they are not entirely correct.
